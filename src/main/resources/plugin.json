@@ -1,0 +1,8 @@
+{
+  "name": "@name@",
+  "main": "sr.will.vexbot.VexBot",
+  "version": "@version@",
+  "description": "@description@",
+  "author": "@author@",
+  "website": "@website@"
+}

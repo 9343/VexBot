@@ -1,0 +1,64 @@
+buildscript {
+    repositories {
+        jcenter()
+    }
+}
+
+plugins {
+    id "java"
+    id "idea"
+    id "com.github.johnrengelman.shadow" version "2.0.2"
+    id "ninja.miserable.blossom" version "1.0.1"
+}
+
+def buildNumber = System.env.BUILD_NUMBER ?: "SNAPSHOT"
+
+def projectId = "vexbot"
+project.group = "sr.will.vexbot"
+project.version = "1.0-" + buildNumber
+project.description = "A VexBot Module for Jarvis"
+def projectUrl = "https://github.com/9343/VexBot"
+def projectAuthor = "Willsr71"
+def projectSite = "https://will.sr"
+
+def jarName = "${projectId}-${project.version.toString()}.jar"
+
+repositories {
+    jcenter()
+
+    maven { url "https://repo.noxal.net/artifactory/gradle-dev-local" }
+}
+
+dependencies {
+    compileOnly "sr.will:jarvis:1.0-79"
+}
+
+processResources {
+    filter {
+        String line ->
+            line.replaceAll("@name@", project.name)
+                    .replaceAll("@id@", projectId)
+                    .replaceAll("@version@", project.version.toString())
+                    .replaceAll("@description@", project.description)
+                    .replaceAll("@url@", projectUrl)
+                    .replaceAll("@author@", projectAuthor)
+                    .replaceAll("@website@", projectSite)
+    }
+}
+
+jar {
+    archiveName jarName
+}
+
+shadowJar {
+    archiveName jarName
+}
+
+build {
+    dependsOn clean
+    dependsOn jar
+    dependsOn shadowJar
+
+    jar.mustRunAfter clean
+    shadowJar.mustRunAfter jar
+}
