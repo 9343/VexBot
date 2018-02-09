@@ -8,6 +8,7 @@ import sr.will.jarvis.event.EventHandler;
 import sr.will.jarvis.event.EventPriority;
 import sr.will.vexbot.GuildVerificationData;
 import sr.will.vexbot.VexBot;
+import sr.will.vexbot.rest.vexdb.Teams;
 
 public class EventHandlerVerify extends EventHandler {
     private VexBot module;
@@ -46,7 +47,13 @@ public class EventHandlerVerify extends EventHandler {
         String name = event.getMessage().getContentDisplay().split("\\|")[0].trim();
         String team = event.getMessage().getContentDisplay().split("\\|")[1].trim();
 
-        // TODO check for valid team
+        Teams teams = module.getTeams(team);
+        if (teams.result.size() == 0) {
+            Command.sendFailureMessage(event.getMessage(), "Invalid team");
+            return;
+        }
+
+        team = teams.result.get(0).number;
 
         String nickname = name + " | " + team;
         Role role = event.getGuild().getRoleById(verificationData.roleId);

@@ -1,10 +1,15 @@
 package sr.will.vexbot;
 
+import com.google.gson.Gson;
+import com.mashape.unirest.http.Unirest;
+import com.mashape.unirest.http.exceptions.UnirestException;
 import net.dv8tion.jda.core.Permission;
 import sr.will.jarvis.Jarvis;
 import sr.will.jarvis.module.Module;
+import sr.will.vexbot.command.CommandTeam;
 import sr.will.vexbot.command.CommandVerifySettings;
 import sr.will.vexbot.event.EventHandlerVerify;
+import sr.will.vexbot.rest.vexdb.Teams;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -12,6 +17,7 @@ import java.util.HashMap;
 
 public class VexBot extends Module {
     private HashMap<Long, GuildVerificationData> guildVerificationData = new HashMap<>();
+    private Gson gson = new Gson();
 
     public void initialize() {
         setNeededPermissions(
@@ -30,6 +36,7 @@ public class VexBot extends Module {
 
         registerEventHandler(new EventHandlerVerify(this));
 
+        registerCommand("team", new CommandTeam(this));
         registerCommand("verifysettings", new CommandVerifySettings(this));
     }
 
@@ -74,5 +81,18 @@ public class VexBot extends Module {
 
     public Long getVerificationChannel(long guildId) {
         return guildVerificationData.get(guildId).channelId;
+    }
+
+    public String getFromDB(String query) {
+        try {
+            return Unirest.get("https://api.vexdb.io/v1/" + query).header("User-Agent", "Jarvis github.com/9343/VexBot").asString().getBody();
+        } catch (UnirestException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    public Teams getTeams(String team) {
+        return gson.fromJson(getFromDB("get_teams?team=" + team), Teams.class);
     }
 }
