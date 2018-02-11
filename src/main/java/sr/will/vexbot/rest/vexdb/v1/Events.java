@@ -1,9 +1,9 @@
-package sr.will.vexbot.rest.vexdb;
+package sr.will.vexbot.rest.vexdb.v1;
 
-import java.util.ArrayList;
+import java.util.List;
 
 public class Events extends APIV1 {
-    public ArrayList<Event> result;
+    public List<Event> result;
 
     public class Event {
         public String sku;
@@ -20,6 +20,6 @@ public class Events extends APIV1 {
         public String season;
         public String start;
         public String end;
-        public ArrayList<String> divisions;
+        public List<String> divisions;
     }
 }

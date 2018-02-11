@@ -6,18 +6,25 @@ import com.mashape.unirest.http.exceptions.UnirestException;
 import net.dv8tion.jda.core.Permission;
 import sr.will.jarvis.Jarvis;
 import sr.will.jarvis.module.Module;
+import sr.will.vexbot.command.CommandAwards;
 import sr.will.vexbot.command.CommandTeam;
 import sr.will.vexbot.command.CommandVerifySettings;
 import sr.will.vexbot.event.EventHandlerVerify;
-import sr.will.vexbot.rest.vexdb.Teams;
+import sr.will.vexbot.rest.vexdb.v1.Awards;
+import sr.will.vexbot.rest.vexdb.v1.Teams;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.HashMap;
+import java.util.regex.Pattern;
 
 public class VexBot extends Module {
     private HashMap<Long, GuildVerificationData> guildVerificationData = new HashMap<>();
     private Gson gson = new Gson();
+
+    public static final Pattern teamPattern = Pattern.compile("[0-9]{1,5}[a-zA-Z]");
+    public static final Pattern validationPattern = Pattern.compile("([a-zA-Z]+)\\s*\\|\\s*(" + teamPattern.pattern() + ")");
+    public static final String season = "In The Zone";
 
     public void initialize() {
         setNeededPermissions(
@@ -36,6 +43,7 @@ public class VexBot extends Module {
 
         registerEventHandler(new EventHandlerVerify(this));
 
+        registerCommand("awards", new CommandAwards(this));
         registerCommand("team", new CommandTeam(this));
         registerCommand("verifysettings", new CommandVerifySettings(this));
     }
@@ -85,11 +93,18 @@ public class VexBot extends Module {
 
     public String getFromDB(String query) {
         try {
-            return Unirest.get("https://api.vexdb.io/v1/" + query).header("User-Agent", "Jarvis github.com/9343/VexBot").asString().getBody();
+            return Unirest.get("https://api.vexdb.io/v1/" + query + "&season=current")
+                    .header("User-Agent", "Jarvis github.com/9343/VexBot")
+                    .asString()
+                    .getBody();
         } catch (UnirestException e) {
             e.printStackTrace();
             return null;
         }
+    }
+
+    public Awards getAwards(String team) {
+        return gson.fromJson(getFromDB("get_awards?team=" + team), Awards.class);
     }
 
     public Teams getTeams(String team) {

@@ -1,4 +1,4 @@
-package sr.will.vexbot.rest.vexdb;
+package sr.will.vexbot.rest.vexdb.v1;
 
 public class APIV1 {
     public int status;

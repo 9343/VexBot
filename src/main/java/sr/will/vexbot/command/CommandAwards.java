@@ -4,16 +4,16 @@ import net.dv8tion.jda.core.EmbedBuilder;
 import net.dv8tion.jda.core.entities.Message;
 import sr.will.jarvis.command.Command;
 import sr.will.vexbot.VexBot;
-import sr.will.vexbot.rest.vexdb.v1.Teams;
+import sr.will.vexbot.rest.vexdb.v1.Awards;
 
 import java.awt.*;
 import java.util.regex.Matcher;
 
-public class CommandTeam extends Command {
+public class CommandAwards extends Command {
     private VexBot module;
 
-    public CommandTeam(VexBot module) {
-        super("team", "team <team>", "Get info for a team", module);
+    public CommandAwards(VexBot module) {
+        super("awards", "awards <team>", "Get awards for a team", module);
         this.module = module;
     }
 
@@ -34,27 +34,37 @@ public class CommandTeam extends Command {
             return;
         }
 
-        Teams teams = module.getTeams(matcher.group());
-        if (teams == null || teams.status != 1) {
+        Awards awards = module.getAwards(matcher.group());
+        if (awards == null || awards.status != 1) {
             sendFailureMessage(message, "An error occurred");
             return;
         }
 
-        if (teams.size == 0) {
-            sendFailureMessage(message, "Team does not exist");
+        if (awards.size == 0) {
+            sendFailureMessage(message, "No awards found");
             return;
         }
 
-        Teams.Team team = teams.result.get(0);
+        StringBuilder result = new StringBuilder();
+        String event = "";
+        String team = null;
+        for (Awards.Award award : awards.result) {
+            if (team == null) {
+                team = award.team;
+            }
+
+            if (award.sku.equals(event)) {
+                event = award.sku;
+                result.append("\n**").append(award.sku).append("**");
+            }
+
+            result.append("\n").append(award.name);
+        }
 
         message.getChannel().sendMessage(new EmbedBuilder()
                 .setColor(Color.GREEN)
-                .setAuthor(team.number, "https://vexdb.io/teams/view/" + team.number)
-                .addField("Team Name", team.team_name, true)
-                .addField("Organization", team.organisation, true)
-                .addField("Location", team.city + ", " + team.region + ", " + team.country, true)
-                .addField("Grade", team.grade, true)
-                .addField("Program", team.program, true)
+                .setAuthor(team, "https://vexdb.io/teams/view/" + team)
+                .setDescription(result.toString())
                 .setFooter("Returned in " + (System.currentTimeMillis() - startTime) + "ms", null)
                 .build()).queue();
     }

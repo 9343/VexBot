@@ -3,12 +3,15 @@ package sr.will.vexbot.event;
 import net.dv8tion.jda.core.entities.Role;
 import net.dv8tion.jda.core.events.Event;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
+import sr.will.jarvis.Jarvis;
 import sr.will.jarvis.command.Command;
 import sr.will.jarvis.event.EventHandler;
 import sr.will.jarvis.event.EventPriority;
 import sr.will.vexbot.GuildVerificationData;
 import sr.will.vexbot.VexBot;
-import sr.will.vexbot.rest.vexdb.Teams;
+import sr.will.vexbot.rest.vexdb.v1.Teams;
+
+import java.util.regex.Matcher;
 
 public class EventHandlerVerify extends EventHandler {
     private VexBot module;
@@ -26,11 +29,11 @@ public class EventHandlerVerify extends EventHandler {
     }
 
     public void onMessageReceived(MessageReceivedEvent event) {
-        if (!module.isEnabled(event.getGuild().getIdLong())) {
+        if (event.getAuthor().getIdLong() == Jarvis.getJda().getSelfUser().getIdLong()) {
             return;
         }
 
-        if (!module.isDataSet(event.getGuild().getIdLong())) {
+        if (!module.isEnabled(event.getGuild().getIdLong()) || !module.isDataSet(event.getGuild().getIdLong())) {
             return;
         }
 
@@ -40,15 +43,17 @@ public class EventHandlerVerify extends EventHandler {
             return;
         }
 
-        if (!event.getMessage().getContentDisplay().contains("|")) {
+        Matcher matcher = VexBot.validationPattern.matcher(event.getMessage().getContentDisplay());
+
+        if (!matcher.matches()) {
             return;
         }
 
-        String name = event.getMessage().getContentDisplay().split("\\|")[0].trim();
-        String team = event.getMessage().getContentDisplay().split("\\|")[1].trim();
+        String name = matcher.group(1);
+        String team = matcher.group(2);
 
         Teams teams = module.getTeams(team);
-        if (teams.result.size() == 0) {
+        if (teams.size == 0) {
             Command.sendFailureMessage(event.getMessage(), "Invalid team");
             return;
         }

@@ -1,9 +1,9 @@
-package sr.will.vexbot.rest.vexdb;
+package sr.will.vexbot.rest.vexdb.v1;
 
-import java.util.ArrayList;
+import java.util.List;
 
 public class Teams extends APIV1 {
-    public ArrayList<Team> result;
+    public List<Team> result;
 
     public class Team {
         public String number;

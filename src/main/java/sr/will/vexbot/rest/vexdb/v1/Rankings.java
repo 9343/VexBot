@@ -1,9 +1,9 @@
-package sr.will.vexbot.rest.vexdb;
+package sr.will.vexbot.rest.vexdb.v1;
 
-import java.util.ArrayList;
+import java.util.List;
 
 public class Rankings extends APIV1 {
-    public ArrayList<Ranking> result;
+    public List<Ranking> result;
 
     public class Ranking {
         public String sku;

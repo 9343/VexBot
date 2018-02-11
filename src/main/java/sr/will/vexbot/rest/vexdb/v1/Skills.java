@@ -1,9 +1,9 @@
-package sr.will.vexbot.rest.vexdb;
+package sr.will.vexbot.rest.vexdb.v1;
 
-import java.util.ArrayList;
+import java.util.List;
 
 public class Skills extends APIV1 {
-    public ArrayList<Skill> result;
+    public List<Skill> result;
 
     public class Skill {
         public String sku;

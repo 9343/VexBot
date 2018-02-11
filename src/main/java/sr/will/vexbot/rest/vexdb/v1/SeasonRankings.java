@@ -1,9 +1,9 @@
-package sr.will.vexbot.rest.vexdb;
+package sr.will.vexbot.rest.vexdb.v1;
 
-import java.util.ArrayList;
+import java.util.List;
 
 public class SeasonRankings extends APIV1 {
-    public ArrayList<SeasonRanking> result;
+    public List<SeasonRanking> result;
 
     public class SeasonRanking {
         public String team;

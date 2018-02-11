@@ -1,9 +1,9 @@
-package sr.will.vexbot.rest.vexdb;
+package sr.will.vexbot.rest.vexdb.v1;
 
-import java.util.ArrayList;
+import java.util.List;
 
 public class Matches extends APIV1 {
-    public ArrayList<Match> result;
+    public List<Match> result;
 
     public class Match {
         public String sku;
