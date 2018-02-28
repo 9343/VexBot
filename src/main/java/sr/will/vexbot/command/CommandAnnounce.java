@@ -24,11 +24,18 @@ public class CommandAnnounce extends Command {
         }
 
         String content = message.getContentRaw();
-        content = content.substring(content.indexOf(args[0]) + args[0].length(), content.length());
+        content = content.substring(content.indexOf(args[0]) + args[0].length(), content.length()); // get everything after the webhook link
+        content = content.replaceAll("\"", "\\\\\""); // escape quotation marks
+        content = content.replaceAll("\\R", "\\\\n"); // literal newlines
         content = "{\"content\":\"" + content + "\"}";
 
         try {
             String string = Unirest.post(args[0]).header("Content-Type", "application/json").body(content).asString().getBody();
+
+            if (string != null) {
+                sendFailureMessage(message, string);
+                return;
+            }
         } catch (UnirestException e) {
             e.printStackTrace();
             sendFailureMessage(message, "Something went wrong");
