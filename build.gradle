@@ -26,11 +26,11 @@ def jarName = "${projectId}-${project.version.toString()}.jar"
 repositories {
     jcenter()
 
-    maven { url "https://repo.noxal.net/artifactory/gradle-dev-local" }
+    maven { url "https://repo.noxal.net/" }
 }
 
 dependencies {
-    compileOnly "sr.will:jarvis:1.0-87"
+    compileOnly "sr.will:jarvis:1.0-98"
 }
 
 processResources {

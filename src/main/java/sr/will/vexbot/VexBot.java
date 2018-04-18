@@ -6,11 +6,7 @@ import com.mashape.unirest.http.exceptions.UnirestException;
 import net.dv8tion.jda.core.Permission;
 import sr.will.jarvis.Jarvis;
 import sr.will.jarvis.module.Module;
-import sr.will.vexbot.command.CommandAnnounce;
-import sr.will.vexbot.command.CommandAwards;
-import sr.will.vexbot.command.CommandTeam;
-import sr.will.vexbot.command.CommandVerifySettings;
-import sr.will.vexbot.event.EventHandlerVerify;
+import sr.will.vexbot.command.*;
 import sr.will.vexbot.rest.vexdb.v1.Awards;
 import sr.will.vexbot.rest.vexdb.v1.Teams;
 
@@ -41,11 +37,10 @@ public class VexBot extends Module {
         );
         setDefaultEnabled(false);
 
-        registerEventHandler(new EventHandlerVerify(this));
-
         registerCommand("announce", new CommandAnnounce(this));
         registerCommand("awards", new CommandAwards(this));
         registerCommand("team", new CommandTeam(this));
+        registerCommand("verify", new CommandVerify(this));
         registerCommand("verifysettings", new CommandVerifySettings(this));
     }
 
