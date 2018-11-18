@@ -30,7 +30,7 @@ repositories {
 }
 
 dependencies {
-    compileOnly "sr.will:jarvis:1.0-98"
+    compileOnly "sr.will:jarvis:1.0-124"
 }
 
 processResources {

@@ -3,6 +3,7 @@ package sr.will.vexbot.command;
 import net.dv8tion.jda.core.EmbedBuilder;
 import net.dv8tion.jda.core.entities.Message;
 import sr.will.jarvis.command.Command;
+import sr.will.vexbot.QueryBuilder;
 import sr.will.vexbot.VexBot;
 import sr.will.vexbot.rest.vexdb.v1.Awards;
 
@@ -34,7 +35,7 @@ public class CommandAwards extends Command {
             return;
         }
 
-        Awards awards = module.getAwards(matcher.group());
+        Awards awards = new QueryBuilder().filter("team", matcher.group()).get(Awards.class);
         if (awards == null || awards.status != 1) {
             sendFailureMessage(message, "An error occurred");
             return;
@@ -58,7 +59,7 @@ public class CommandAwards extends Command {
                 result.append("\n**").append(award.sku).append("**");
             }
 
-            result.append("\n").append(award.name);
+            result.append("\n:trophy:").append(award.name);
         }
 
         message.getChannel().sendMessage(new EmbedBuilder()

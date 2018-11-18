@@ -4,6 +4,7 @@ import net.dv8tion.jda.core.entities.Message;
 import net.dv8tion.jda.core.entities.Role;
 import sr.will.jarvis.command.Command;
 import sr.will.vexbot.GuildVerificationData;
+import sr.will.vexbot.QueryBuilder;
 import sr.will.vexbot.VexBot;
 import sr.will.vexbot.rest.vexdb.v1.Teams;
 
@@ -41,7 +42,7 @@ public class CommandVerify extends Command {
         String name = matcher.group(1);
         String team = matcher.group(2);
 
-        Teams teams = module.getTeams(team);
+        Teams teams = new QueryBuilder().filter("team", team).get(Teams.class);
         if (teams.size == 0) {
             sendFailureMessage(message, "Invalid team");
             return;

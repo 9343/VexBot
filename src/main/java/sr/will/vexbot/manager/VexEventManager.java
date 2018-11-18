@@ -1,6 +1,6 @@
 package sr.will.vexbot.manager;
 
-import com.google.gson.Gson;
+import sr.will.vexbot.QueryBuilder;
 import sr.will.vexbot.VexBot;
 import sr.will.vexbot.rest.vexdb.v1.Events;
 
@@ -13,11 +13,9 @@ public class VexEventManager {
         this.module = module;
 
         ZonedDateTime dateTime = ZonedDateTime.now();
-
     }
 
     public void checkEvents(String date) {
-        Gson gson = new Gson();
-        Events events = gson.fromJson(module.getFromDB("get_events?region=Maine&date=" + date), Events.class);
+        Events events = new QueryBuilder().filter("region", "Maine").filter("date", date).get(Events.class);
     }
 }

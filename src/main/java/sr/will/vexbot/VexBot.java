@@ -1,15 +1,12 @@
 package sr.will.vexbot;
 
-import com.google.gson.Gson;
-import com.mashape.unirest.http.Unirest;
-import com.mashape.unirest.http.exceptions.UnirestException;
 import net.dv8tion.jda.core.Permission;
 import sr.will.jarvis.Jarvis;
 import sr.will.jarvis.module.Module;
 import sr.will.vexbot.command.*;
-import sr.will.vexbot.rest.vexdb.v1.Awards;
-import sr.will.vexbot.rest.vexdb.v1.Teams;
+import sr.will.vexbot.rest.vexdb.v1.*;
 
+import java.lang.reflect.Type;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.HashMap;
@@ -17,7 +14,7 @@ import java.util.regex.Pattern;
 
 public class VexBot extends Module {
     private HashMap<Long, GuildVerificationData> guildVerificationData = new HashMap<>();
-    private Gson gson = new Gson();
+    public static HashMap<Type, String> methods = new HashMap<>();
 
     public static final Pattern teamPattern = Pattern.compile("[0-9]{1,5}[a-zA-Z]");
     public static final Pattern validationPattern = Pattern.compile("([a-zA-Z]+)\\s*\\|\\s*(" + teamPattern.pattern() + ")");
@@ -60,6 +57,14 @@ public class VexBot extends Module {
         } catch (SQLException e) {
             e.printStackTrace();
         }
+
+        methods.put(Awards.class, "get_awards");
+        methods.put(Events.class, "get_events");
+        methods.put(Matches.class, "get_matches");
+        methods.put(Rankings.class, "get_rankings");
+        methods.put(SeasonRankings.class, "get_season_rankings");
+        methods.put(Skills.class, "get_skills");
+        methods.put(Teams.class, "get_teams");
     }
 
     public void stop() {
@@ -85,25 +90,5 @@ public class VexBot extends Module {
 
     public Long getVerificationChannel(long guildId) {
         return guildVerificationData.get(guildId).channelId;
-    }
-
-    public String getFromDB(String query) {
-        try {
-            return Unirest.get("https://api.vexdb.io/v1/" + query + "&season=current")
-                    .header("User-Agent", "Jarvis github.com/9343/VexBot")
-                    .asString()
-                    .getBody();
-        } catch (UnirestException e) {
-            e.printStackTrace();
-            return null;
-        }
-    }
-
-    public Awards getAwards(String team) {
-        return gson.fromJson(getFromDB("get_awards?team=" + team), Awards.class);
-    }
-
-    public Teams getTeams(String team) {
-        return gson.fromJson(getFromDB("get_teams?team=" + team), Teams.class);
     }
 }

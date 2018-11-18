@@ -3,6 +3,7 @@ package sr.will.vexbot.command;
 import net.dv8tion.jda.core.EmbedBuilder;
 import net.dv8tion.jda.core.entities.Message;
 import sr.will.jarvis.command.Command;
+import sr.will.vexbot.QueryBuilder;
 import sr.will.vexbot.VexBot;
 import sr.will.vexbot.rest.vexdb.v1.Teams;
 
@@ -34,7 +35,7 @@ public class CommandTeam extends Command {
             return;
         }
 
-        Teams teams = module.getTeams(matcher.group());
+        Teams teams = new QueryBuilder().filter("team", matcher.group()).get(Teams.class);
         if (teams == null || teams.status != 1) {
             sendFailureMessage(message, "An error occurred");
             return;
